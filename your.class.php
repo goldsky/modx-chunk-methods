@@ -32,7 +32,7 @@ class ClassName {
      * @param   array   $phs    placeholders
      * @return  string  parsed output
      */
-    public function parseTpl($tpl, array $phs) {
+    public function parseTpl($tpl, array $phs=array()) {
         $output = '';
         if (preg_match('/^(@CODE|@INLINE)/i', $tpl)) {
             $tplString= preg_replace('/^(@CODE|@INLINE)/i', '', $tpl);
@@ -83,7 +83,7 @@ class ClassName {
      * @param   array   $phs    placeholders
      * @return  string  parsed output
      */
-    public function parseTplCode($code, $phs) {
+    public function parseTplCode($code, array $phs=array()) {
         $chunk = $this->modx->newObject('modChunk');
         $chunk->setContent($code);
         $chunk->setCacheable(false);
@@ -98,7 +98,7 @@ class ClassName {
      * @return  string  parsed output
      * @throws  Exception if file is not found
      */
-    public function parseTplFile($file, $phs) {
+    public function parseTplFile($file, array $phs=array()) {
         $chunk = false;
         if (!file_exists($file)) {
             throw new Exception ('File: ' . $file . ' is not found.');
