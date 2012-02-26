@@ -10,6 +10,7 @@ The snippet's call would be:
     [[SnippetName? &tpl=`@FILE: path/to/file`]]
 
 The snippet's API usage would be:
+    
     $object = new YourClass($modx);
     $object->setConfig($scriptProperties);
 
