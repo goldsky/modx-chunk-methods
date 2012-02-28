@@ -31,7 +31,7 @@ class ClassName {
      * @param   string  $tpl    @BINDINGs options
      * @param   array   $phs    placeholders
      * @return  string  parsed output
-     * $link    http://forums.modx.com/thread/74071/help-with-getchunk-and-modx-speed-please?page=2#dis-post-413789
+     * @link    http://forums.modx.com/thread/74071/help-with-getchunk-and-modx-speed-please?page=2#dis-post-413789
      */
     public function parseTpl($tpl, array $phs=array()) {
         $output = '';
