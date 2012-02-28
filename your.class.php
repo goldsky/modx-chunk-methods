@@ -31,6 +31,7 @@ class ClassName {
      * @param   string  $tpl    @BINDINGs options
      * @param   array   $phs    placeholders
      * @return  string  parsed output
+     * $link    http://forums.modx.com/thread/74071/help-with-getchunk-and-modx-speed-please?page=2#dis-post-413789
      */
     public function parseTpl($tpl, array $phs=array()) {
         $output = '';
@@ -54,20 +55,20 @@ class ClassName {
         }
         // ignore @CHUNK / @CHUNK: / empty @BINDING
         else {
-            $tpl= preg_replace('/^@CHUNK/i', '', $tpl);
+            $tplChunk= preg_replace('/^@CHUNK/i', '', $tpl);
             // tricks @CHUNK:
-            $tpl = ltrim($tpl, ':');
-            $tpl = trim($tpl);
+            $tplChunk = ltrim($tpl, ':');
+            $tplChunk = trim($tpl);
 
-            $chunk = $this->modx->getObject('modChunk', array ('name' => $tpl), true);
+            $chunk = $this->modx->getObject('modChunk', array ('name' => $tplChunk), true);
             if (empty($chunk)) {
                 // try to use @splittingred's fallback
-                $f = $this->config['chunksPath'] . strtolower($tpl) . '.chunk.tpl';
+                $f = $this->config['chunksPath'] . strtolower($tplChunk) . '.chunk.tpl';
                 try {
                     $output = $this->parseTplFile($f, $phs);
                 } catch(Exception $e) {
                     $output = $e->getMessage();
-                    return 'Chunk: ' . $tpl . ' is not found, neither the file ' . $output;
+                    return 'Chunk: ' . $tplChunk . ' is not found, neither the file ' . $output;
                 }
             } else {
                 $output = $this->modx->getChunk($tpl, $phs);
