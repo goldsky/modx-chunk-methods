@@ -7,24 +7,53 @@
 class ClassName {
 
     public $modx;
-    public $config;
+    public $configs;
 
     /**
      * constructor
      * @param   modX    $modx
      */
-    public function __construct(modX $modx) {
-        $this->modx =& $modx;
+    public function __construct(modX $modx, array $configs = array()) {
+        $this->modx = & $modx;
+
+        if (!empty($configs)) {
+            $this->setConfigs($configs);
+        }
+
+        $this->modx->lexicon->load('package:default');
+        $this->modx->addPackage('package', $this->configs['modelPath']);
     }
 
     /**
      * Set class configuration exclusively for multiple snippet calls
      * @param   array   $config     snippet's parameters
      */
-    public function setConfig(array $config=array()) {
-        $this->config = $config;
+    public function setConfigs(array $configs = array()) {
+        $this->configs = $configs;
+
+        $basePath = $this->modx->getOption('package.core_path', $configs, $this->modx->getOption('core_path') . 'components/package/');
+        $assetsUrl = $this->modx->getOption('package.assets_url', $configs, $this->modx->getOption('assets_url') . 'components/package/');
+        $this->configs = array_merge(array(
+            'basePath' => $basePath,
+            'corePath' => $basePath,
+            'modelPath' => $basePath . 'models/',
+            'processorsPath' => $basePath . 'processors/',
+            'chunksPath' => $basePath . 'elements/chunks/',
+            'jsUrl' => $assetsUrl . 'js/',
+            'cssUrl' => $assetsUrl . 'css/',
+            'assetsUrl' => $assetsUrl,
+            'connectorUrl' => $assetsUrl . 'connector.php',
+                ), $configs);
     }
 
+    /**
+     * Define individual config for the class
+     * @param   string  $key    array's key
+     * @param   string  $val    array's value
+     */
+    public function setConfig($key, $val) {
+        $this->configs[$key] = $val;
+    }
 
     /**
      * Parsing template
@@ -33,10 +62,10 @@ class ClassName {
      * @return  string  parsed output
      * @link    http://forums.modx.com/thread/74071/help-with-getchunk-and-modx-speed-please?page=2#dis-post-413789
      */
-    public function parseTpl($tpl, array $phs=array()) {
+    public function parseTpl($tpl, array $phs = array()) {
         $output = '';
         if (preg_match('/^(@CODE|@INLINE)/i', $tpl)) {
-            $tplString= preg_replace('/^(@CODE|@INLINE)/i', '', $tpl);
+            $tplString = preg_replace('/^(@CODE|@INLINE)/i', '', $tpl);
             // tricks @CODE: / @INLINE:
             $tplString = ltrim($tplString, ':');
             $tplString = trim($tplString);
@@ -49,24 +78,24 @@ class ClassName {
             $tplFile = $this->replacePropPhs($tplFile);
             try {
                 $output = $this->parseTplFile($tplFile, $phs);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 return $e->getMessage();
             }
         }
         // ignore @CHUNK / @CHUNK: / empty @BINDING
         else {
-            $tplChunk= preg_replace('/^@CHUNK/i', '', $tpl);
+            $tplChunk = preg_replace('/^@CHUNK/i', '', $tpl);
             // tricks @CHUNK:
             $tplChunk = ltrim($tpl, ':');
             $tplChunk = trim($tpl);
 
-            $chunk = $this->modx->getObject('modChunk', array ('name' => $tplChunk), true);
+            $chunk = $this->modx->getObject('modChunk', array('name' => $tplChunk), true);
             if (empty($chunk)) {
                 // try to use @splittingred's fallback
-                $f = $this->config['chunksPath'] . strtolower($tplChunk) . '.chunk.tpl';
+                $f = $this->configs['chunksPath'] . strtolower($tplChunk) . '.chunk.tpl';
                 try {
                     $output = $this->parseTplFile($f, $phs);
-                } catch(Exception $e) {
+                } catch (Exception $e) {
                     $output = $e->getMessage();
                     return 'Chunk: ' . $tplChunk . ' is not found, neither the file ' . $output;
                 }
@@ -84,7 +113,7 @@ class ClassName {
      * @param   array   $phs    placeholders
      * @return  string  parsed output
      */
-    public function parseTplCode($code, array $phs=array()) {
+    public function parseTplCode($code, array $phs = array()) {
         $chunk = $this->modx->newObject('modChunk');
         $chunk->setContent($code);
         $chunk->setCacheable(false);
@@ -99,10 +128,10 @@ class ClassName {
      * @return  string  parsed output
      * @throws  Exception if file is not found
      */
-    public function parseTplFile($file, array $phs=array()) {
+    public function parseTplFile($file, array $phs = array()) {
         $chunk = false;
         if (!file_exists($file)) {
-            throw new Exception ('File: ' . $file . ' is not found.');
+            throw new Exception('File: ' . $file . ' is not found.');
         }
         $o = file_get_contents($file);
         $chunk = $this->modx->newObject('modChunk');
@@ -156,4 +185,3 @@ class ClassName {
     }
 
 }
-
