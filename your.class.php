@@ -16,21 +16,6 @@ class ClassName {
     public function __construct(modX $modx, array $configs = array()) {
         $this->modx = & $modx;
 
-        if (!empty($configs)) {
-            $this->setConfigs($configs);
-        }
-
-        $this->modx->lexicon->load('package:default');
-        $this->modx->addPackage('package', $this->configs['modelPath']);
-    }
-
-    /**
-     * Set class configuration exclusively for multiple snippet calls
-     * @param   array   $config     snippet's parameters
-     */
-    public function setConfigs(array $configs = array()) {
-        $this->configs = $configs;
-
         $basePath = $this->modx->getOption('package.core_path', $configs, $this->modx->getOption('core_path') . 'components/package/');
         $assetsUrl = $this->modx->getOption('package.assets_url', $configs, $this->modx->getOption('assets_url') . 'components/package/');
         $this->configs = array_merge(array(
@@ -44,6 +29,17 @@ class ClassName {
             'assetsUrl' => $assetsUrl,
             'connectorUrl' => $assetsUrl . 'connector.php',
                 ), $configs);
+
+        $this->modx->lexicon->load('package:default');
+        $this->modx->addPackage('package', $this->configs['modelPath']);
+    }
+
+    /**
+     * Set class configuration exclusively for multiple snippet calls
+     * @param   array   $config     snippet's parameters
+     */
+    public function setConfigs(array $configs = array()) {
+        $this->configs = array_merge($this->configs, $configs);
     }
 
     /**
