@@ -12,6 +12,7 @@ class ClassName {
     /**
      * constructor
      * @param   modX    $modx
+     * @param   array   $config     parameters
      */
     public function __construct(modX $modx, array $configs = array()) {
         $this->modx = & $modx;
