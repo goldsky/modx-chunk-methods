@@ -14,15 +14,15 @@ class ClassName {
      * @param   modX    $modx
      * @param   array   $config     parameters
      */
-    public function __construct(modX $modx, array $configs = array()) {
+    public function __construct(modX $modx, $configs = array()) {
         $this->modx = & $modx;
-
+        $configs = is_array($configs) ? $configs : array();
         $basePath = $this->modx->getOption('package.core_path', $configs, $this->modx->getOption('core_path') . 'components/package/');
         $assetsUrl = $this->modx->getOption('package.assets_url', $configs, $this->modx->getOption('assets_url') . 'components/package/');
         $this->configs = array_merge(array(
             'basePath' => $basePath,
             'corePath' => $basePath,
-            'modelPath' => $basePath . 'models/',
+            'modelPath' => $basePath . 'model/',
             'processorsPath' => $basePath . 'processors/',
             'chunksPath' => $basePath . 'elements/chunks/',
             'jsUrl' => $assetsUrl . 'js/',
@@ -126,7 +126,6 @@ class ClassName {
      * @throws  Exception if file is not found
      */
     public function parseTplFile($file, array $phs = array()) {
-        $chunk = false;
         if (!file_exists($file)) {
             throw new Exception('File: ' . $file . ' is not found.');
         }
@@ -165,7 +164,8 @@ class ClassName {
             $this->modx->getOption('base_path'),
             $this->modx->getOption('assets_url'),
             $this->modx->getOption('filemanager_path'),
-            $this->modx->getOption('core_path')
+            $this->modx->getOption('core_path'),
+            $this->modx->getOption('base_path')
         );
         if (is_array($subject)) {
             $parsedString = array();
