@@ -7,19 +7,19 @@
 class ClassName {
 
     public $modx;
-    public $configs;
+    public $config;
 
     /**
      * constructor
      * @param   modX    $modx
      * @param   array   $config     parameters
      */
-    public function __construct(modX $modx, $configs = array()) {
+    public function __construct(modX $modx, $config = array()) {
         $this->modx = & $modx;
-        $configs = is_array($configs) ? $configs : array();
-        $basePath = $this->modx->getOption('package.core_path', $configs, $this->modx->getOption('core_path') . 'components/package/');
-        $assetsUrl = $this->modx->getOption('package.assets_url', $configs, $this->modx->getOption('assets_url') . 'components/package/');
-        $this->configs = array_merge(array(
+        $config = is_array($config) ? $config : array();
+        $basePath = $this->modx->getOption('package.core_path', $config, $this->modx->getOption('core_path') . 'components/package/');
+        $assetsUrl = $this->modx->getOption('package.assets_url', $config, $this->modx->getOption('assets_url') . 'components/package/');
+        $this->config = array_merge(array(
             'basePath' => $basePath,
             'corePath' => $basePath,
             'modelPath' => $basePath . 'model/',
@@ -29,18 +29,18 @@ class ClassName {
             'cssUrl' => $assetsUrl . 'css/',
             'assetsUrl' => $assetsUrl,
             'connectorUrl' => $assetsUrl . 'connector.php',
-                ), $configs);
+                ), $config);
 
         $this->modx->lexicon->load('package:default');
-        $this->modx->addPackage('package', $this->configs['modelPath']);
+        $this->modx->addPackage('package', $this->config['modelPath']);
     }
 
     /**
      * Set class configuration exclusively for multiple snippet calls
      * @param   array   $config     snippet's parameters
      */
-    public function setConfigs(array $configs = array()) {
-        $this->configs = array_merge($this->configs, $configs);
+    public function setConfigs(array $config = array()) {
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -49,7 +49,7 @@ class ClassName {
      * @param   string  $val    array's value
      */
     public function setConfig($key, $val) {
-        $this->configs[$key] = $val;
+        $this->config[$key] = $val;
     }
 
     /**
@@ -89,7 +89,7 @@ class ClassName {
             $chunk = $this->modx->getObject('modChunk', array('name' => $tplChunk), true);
             if (empty($chunk)) {
                 // try to use @splittingred's fallback
-                $f = $this->configs['chunksPath'] . strtolower($tplChunk) . '.chunk.tpl';
+                $f = $this->config['chunksPath'] . strtolower($tplChunk) . '.chunk.tpl';
                 try {
                     $output = $this->parseTplFile($f, $phs);
                 } catch (Exception $e) {
