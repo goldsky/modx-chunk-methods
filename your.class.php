@@ -146,8 +146,8 @@ class ClassName {
     }
 
     /**
-     * If the chunk is called by AJAX processor, it is needed to be parsed for
-     * the other elements working, like snippet and output filters.
+     * If the chunk is called by AJAX processor, it needs to be parsed for the
+     * other elements to work, like snippet and output filters.
      *
      * Example:
      * <pre><code>
