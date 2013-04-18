@@ -25,6 +25,7 @@ class ClassName {
             'modelPath' => $basePath . 'model/',
             'processorsPath' => $basePath . 'processors/',
             'chunksPath' => $basePath . 'elements/chunks/',
+            'templatesPath' => $basePath . 'templates/',
             'jsUrl' => $assetsUrl . 'js/',
             'cssUrl' => $assetsUrl . 'css/',
             'assetsUrl' => $assetsUrl,
