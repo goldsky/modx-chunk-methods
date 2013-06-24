@@ -172,6 +172,9 @@ class ClassName {
      */
     public function processElementTags($content, array $options = array()) {
         $maxIterations = intval($this->modx->getOption('parser_max_iterations', $options, 10));
+        if (!$this->modx->parser) {
+            $this->modx->getParser();
+        }
         $this->modx->parser->processElementTags('', $content, true, false, '[[', ']]', array(), $maxIterations);
         $this->modx->parser->processElementTags('', $content, true, true, '[[', ']]', array(), $maxIterations);
         return $content;
