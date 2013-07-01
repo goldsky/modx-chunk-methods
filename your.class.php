@@ -98,11 +98,11 @@ class ClassName {
                     return 'Chunk: ' . $tplChunk . ' is not found, neither the file ' . $output;
                 }
             } else {
-//                $output = $this->modx->getChunk($tpl, $phs);
+//                $output = $this->modx->getChunk($tplChunk, $phs);
                 /**
                  * @link    http://forums.modx.com/thread/74071/help-with-getchunk-and-modx-speed-please?page=4#dis-post-464137
                  */
-                $chunk = $this->modx->getParser()->getElement('modChunk', $tpl);
+                $chunk = $this->modx->getParser()->getElement('modChunk', $tplChunk);
                 $chunk->setCacheable(false);
                 $chunk->_processed = false;
                 $output = $chunk->process($phs);
