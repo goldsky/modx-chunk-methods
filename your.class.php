@@ -6,8 +6,31 @@
  */
 class ClassName {
 
+    /**
+     * modX object
+     * @var object
+     */
     public $modx;
+    /**
+     * $scriptProperties
+     * @var array
+     */
     public $config;
+    /**
+     * To hold error message
+     * @var string
+     */
+    private $_error = '';
+    /**
+     * To hold output message
+     * @var string
+     */
+    private $_output = '';
+    /**
+     * To hold placeholder array, flatten array with prefixable
+     * @var array
+     */
+    private $_placeholders = array();
 
     /**
      * constructor
@@ -51,6 +74,139 @@ class ClassName {
      */
     public function setConfig($key, $val) {
         $this->config[$key] = $val;
+    }
+
+    /**
+     * Set string error for boolean returned methods
+     * @return  void
+     */
+    public function setError($msg) {
+        $this->_error = $msg;
+    }
+
+    /**
+     * Get string error for boolean returned methods
+     * @return  string  output
+     */
+    public function getError() {
+        return $this->_error;
+    }
+
+    /**
+     * Set string output for boolean returned methods
+     * @return  void
+     */
+    public function setOutput($msg) {
+        $this->_output = $msg;
+    }
+
+    /**
+     * Get string output for boolean returned methods
+     * @return  string  output
+     */
+    public function getOutput() {
+        return $this->_output;
+    }
+
+    /**
+     * Set internal placeholder
+     * @param   string  $key    key
+     * @param   string  $value  value
+     * @param   string  $prefix add prefix if it's required
+     */
+    public function setPlaceholder($key, $value, $prefix = '') {
+        $prefix = !empty($prefix) ? $prefix : (isset($this->config['phsPrefix']) ? $this->config['phsPrefix'] : '');
+        $this->_placeholders[$prefix . $key] = $value;
+    }
+
+    /**
+     * Set internal placeholders
+     * @param   array   $placeholders   placeholders in an associative array
+     * @param   string  $prefix         add prefix if it's required
+     * @return  boolean
+     */
+    public function setPlaceholders($placeholders, $prefix = '') {
+        if (empty($placeholders)) {
+            return FALSE;
+        }
+        $prefix = !empty($prefix) ? $prefix : (isset($this->config['phsPrefix']) ? $this->config['phsPrefix'] : '');
+        $placeholders = $this->trimArray($placeholders);
+        $placeholders = $this->implodePhs($placeholders, rtrim($prefix, '.'));
+        $this->_placeholders = array_merge($this->_placeholders, $placeholders);
+    }
+
+    /**
+     * Get internal placeholders in an associative array
+     * @return array
+     */
+    public function getPlaceholders() {
+        return $this->_placeholders;
+    }
+
+    /**
+     * Get an internal placeholder
+     * @param   string  $key    key
+     * @return  string  value
+     */
+    public function getPlaceholder($key) {
+        return $this->_placeholders[$key];
+    }
+
+    /**
+     * Merge multi dimensional associative arrays with separator
+     * @param   array   $array      raw associative array
+     * @param   string  $keyName    parent key of this array
+     * @param   string  $separator  separator between the merged keys
+     * @param   array   $holder     to hold temporary array results
+     * @return  array   one level array
+     */
+    public function implodePhs(array $array, $keyName = null, $separator = '.', array $holder = array()) {
+        $phs = !empty($holder) ? $holder : array();
+        foreach ($array as $k => $v) {
+            $key = !empty($keyName) ? $keyName . $separator . $k : $k;
+            if (is_array($v)) {
+                $phs = $this->implodePhs($v, $key, $separator, $phs);
+            } else {
+                $phs[$key] = $v;
+            }
+        }
+        return $phs;
+    }
+
+    /**
+     * Trim string value
+     * @param   string  $string     source text
+     * @param   string  $charlist   defined characters to be trimmed
+     * @link http://php.net/manual/en/function.trim.php
+     * @return  string  trimmed text
+     */
+    public function trimString($string, $charlist = null) {
+        if (empty($string)) {
+            return '';
+        }
+        $string = htmlentities($string);
+        // blame TinyMCE!
+        $string = preg_replace('/(&Acirc;|&nbsp;)+/i', '', $string);
+        $string = trim($string, $charlist);
+        $string = trim(preg_replace('/\s+^(\r|\n|\r\n)/', ' ', $string));
+        return $string;
+    }
+
+    /**
+     * Trim array values
+     * @param   array   $array          array contents
+     * @param   string  $charlist       [default: null] defined characters to be trimmed
+     * @link http://php.net/manual/en/function.trim.php
+     * @return  array   trimmed array
+     */
+    public function trimArray($input, $charlist = null) {
+        if (is_array($input)) {
+            $output = array_map(array($this, 'trimArray'), $input);
+        } else {
+            $output = $this->trimString($input, $charlist);
+        }
+
+        return $output;
     }
 
     /**
