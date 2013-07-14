@@ -189,6 +189,7 @@ class ClassName {
         $string = preg_replace('/(&Acirc;|&nbsp;)+/i', '', $string);
         $string = trim($string, $charlist);
         $string = trim(preg_replace('/\s+^(\r|\n|\r\n)/', ' ', $string));
+        $string = html_entity_decode($string);
         return $string;
     }
 
