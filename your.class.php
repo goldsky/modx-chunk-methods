@@ -116,14 +116,14 @@ class ClassName {
      */
     public function setPlaceholder($key, $value, $prefix = '') {
         $prefix = !empty($prefix) ? $prefix : (isset($this->config['phsPrefix']) ? $this->config['phsPrefix'] : '');
-        $this->_placeholders[$prefix . $key] = $value;
+        $this->_placeholders[$prefix . $key] = $this->trimString($value);
     }
 
     /**
      * Set internal placeholders
      * @param   array   $placeholders   placeholders in an associative array
      * @param   string  $prefix         add prefix if it's required
-     * @return  boolean
+     * @return  mixed   boolean|array of placeholders
      */
     public function setPlaceholders($placeholders, $prefix = '') {
         if (empty($placeholders)) {
@@ -132,7 +132,10 @@ class ClassName {
         $prefix = !empty($prefix) ? $prefix : (isset($this->config['phsPrefix']) ? $this->config['phsPrefix'] : '');
         $placeholders = $this->trimArray($placeholders);
         $placeholders = $this->implodePhs($placeholders, rtrim($prefix, '.'));
+        // enclosed private scope
         $this->_placeholders = array_merge($this->_placeholders, $placeholders);
+        // return only for this scope
+        return $placeholders;
     }
 
     /**
