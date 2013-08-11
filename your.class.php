@@ -184,7 +184,7 @@ class ClassName {
      * @return  string  trimmed text
      */
     public function trimString($string, $charlist = null) {
-        if (empty($string)) {
+        if (empty($string) && !is_numeric($string)) {
             return '';
         }
         $string = htmlentities($string);
