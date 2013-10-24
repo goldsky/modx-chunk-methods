@@ -40,8 +40,8 @@ class ClassName {
     public function __construct(modX $modx, $config = array()) {
         $this->modx = & $modx;
         $config = is_array($config) ? $config : array();
-        $basePath = $this->modx->getOption('package.core_path', $config, $this->modx->getOption('core_path') . 'components/package/');
-        $assetsUrl = $this->modx->getOption('package.assets_url', $config, $this->modx->getOption('assets_url') . 'components/package/');
+        $basePath = $this->modx->getOption('mypackage.core_path', $config, $this->modx->getOption('core_path') . 'components/mypackage/');
+        $assetsUrl = $this->modx->getOption('mypackage.assets_url', $config, $this->modx->getOption('assets_url') . 'components/mypackage/');
         $this->config = array_merge(array(
             'basePath' => $basePath,
             'corePath' => $basePath,
@@ -55,8 +55,9 @@ class ClassName {
             'connectorUrl' => $assetsUrl . 'connector.php',
                 ), $config);
 
-        $this->modx->lexicon->load('package:default');
-        $this->modx->addPackage('package', $this->config['modelPath']);
+        $this->modx->lexicon->load('mypackage:default');
+        $tablePrefix = $this->modx->getOption('mypackage.table_prefix', null, $modx->config[modX::OPT_TABLE_PREFIX] . 'mypackage_');
+        $this->modx->addPackage('mypackage', $this->config['modelPath'], $tablePrefix);
     }
 
     /**
