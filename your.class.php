@@ -390,4 +390,45 @@ class ClassName {
         }
     }
 
+    /**
+     * Replacing MODX's getCount(), because it has bug on counting SQL with function.<br>
+     * Retrieves a count of xPDOObjects by the specified xPDOCriteria.
+     *
+     * @param string $className Class of xPDOObject to count instances of.
+     * @param mixed $criteria Any valid xPDOCriteria object or expression.
+     * @return integer The number of instances found by the criteria.
+     * @see xPDO::getCount()
+     * @link http://forums.modx.com/thread/88619/getcount-fails-if-the-query-has-aggregate-leaving-having-039-s-field-undefined The discussion for this
+     */
+    public function getQueryCount($className, $criteria= null) {
+        $count= 0;
+        if ($query= $this->modx->newQuery($className, $criteria)) {
+            $expr= '*';
+            if ($pk= $this->modx->getPK($className)) {
+                if (!is_array($pk)) {
+                    $pk= array ($pk);
+                }
+                $expr= $this->modx->getSelectColumns($className, 'alias', '', $pk);
+            }
+            $query->prepare();
+            $sql = $query->toSQL();
+            $stmt= $this->modx->query("SELECT COUNT($expr) FROM ($sql) alias");
+            if ($stmt) {
+                $tstart = microtime(true);
+                if ($stmt->execute()) {
+                    $this->modx->queryTime += microtime(true) - $tstart;
+                    $this->modx->executedQueries++;
+                    if ($results= $stmt->fetchAll(PDO::FETCH_COLUMN)) {
+                        $count= reset($results);
+                        $count= intval($count);
+                    }
+                } else {
+                    $this->modx->queryTime += microtime(true) - $tstart;
+                    $this->modx->executedQueries++;
+                    $this->modx->log(modX::LOG_LEVEL_ERROR, "[AdvSearch] Error " . $stmt->errorCode() . " executing statement: \n" . print_r($stmt->errorInfo(), true), '', __METHOD__, __FILE__, __LINE__);
+                }
+            }
+        }
+        return $count;
+    }
 }
