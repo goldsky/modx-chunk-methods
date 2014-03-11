@@ -58,6 +58,7 @@ class ClassName {
             'cssUrl' => $assetsUrl . 'css/',
             'assetsUrl' => $assetsUrl,
             'connectorUrl' => $assetsUrl . 'connector.php',
+            'phsPrefix' => '',
                 ), $config);
 
         $this->modx->lexicon->load('mypackage:default');
@@ -330,6 +331,58 @@ class ClassName {
     }
 
     /**
+     * Parse template recursively for nesting items
+     * @param string    $tplItem    name of item template
+     * @param string    $tplWrapper name of wrapper template
+     * @param array     $phs        placeholders
+     * @param int       $docId      if required to make a link, add the document ID here
+     * @param string    $childKey   if required, define the keyname of the child's placeholder here
+     * @return string   final output
+     */
+    public function parseRecursiveTpl($tplItem, $tplWrapper, $phs = array(), $docId = null, $childKey = 'children') {
+        if (empty($phs)) {
+            return;
+        }
+
+        $childrenOutput = array();
+        foreach ($phs as $k => $v) {
+            if (is_array($v) && !empty($v)) {
+                $children = array();
+                foreach ($v as $i => $j) {
+                    if (is_array($j) && !empty($j)) {
+                        if (!empty($docId)) {
+                            array_walk($j, create_function('&$value,$key', '$value[\'docId\'] = ' . $docId . ';'));
+                        }
+                        $children[] = $this->parseRecursiveTpl($tplItem, $tplWrapper, $j, $docId);
+                    }
+                }
+                $v[$childKey] = @implode('', $children);
+            } else {
+                $v[$childKey] = '';
+            }
+
+            /**
+             * Start the parsing from here
+             */
+            if (!empty($docId)) {
+                $v['docId'] = $docId;
+            }
+            $v = $this->setPlaceholders($v, $this->config['phsPrefix']);
+            $output = $this->parseTpl($tplItem, $v);
+            $childrenOutput[] = $this->processElementTags($output);
+        }
+        $childrenWrapper = array(
+            $childKey . '.rows' => @implode('', $childrenOutput),
+            $childKey . '.count' => count($childrenOutput)
+        );
+        $childrenWrapper = $this->setPlaceholders($childrenWrapper, $this->config['phsPrefix']);
+
+        $wrapperOutput = $this->parseTpl($tplWrapper, $childrenWrapper);
+
+        return $wrapperOutput;
+    }
+
+    /**
      * If the chunk is called by AJAX processor, it needs to be parsed for the
      * other elements to work, like snippet and output filters.
      *
@@ -425,7 +478,7 @@ class ClassName {
                 } else {
                     $this->modx->queryTime += microtime(true) - $tstart;
                     $this->modx->executedQueries++;
-                    $this->modx->log(modX::LOG_LEVEL_ERROR, "[AdvSearch] Error " . $stmt->errorCode() . " executing statement: \n" . print_r($stmt->errorInfo(), true), '', __METHOD__, __FILE__, __LINE__);
+                    $this->modx->log(modX::LOG_LEVEL_ERROR, "[" . __CLASS__ . "] Error " . $stmt->errorCode() . " executing statement: \n" . print_r($stmt->errorInfo(), true), '', __METHOD__, __FILE__, __LINE__);
                 }
             }
         }
