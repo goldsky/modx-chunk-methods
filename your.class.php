@@ -431,4 +431,28 @@ class ClassName {
         }
         return $count;
     }
+
+    /**
+     * Returns select statement for easy reading
+     *
+     * @access public
+     * @param xPDOQuery $query The query to print
+     * @return string The select statement
+     * @author Coroico <coroico@wangba.fr>
+     */
+    public function niceQuery(xPDOQuery $query = null) {
+        $searched = array("SELECT", "GROUP_CONCAT", "LEFT JOIN", "INNER JOIN", "EXISTS", "LIMIT", "FROM",
+            "WHERE", "GROUP BY", "HAVING", "ORDER BY", "OR", "AND", "IFNULL", "ON", "MATCH", "AGAINST",
+            "COUNT");
+        $replace = array(" \r\nSELECT", " \r\nGROUP_CONCAT", " \r\nLEFT JOIN", " \r\nINNER JOIN", " \r\nEXISTS", " \r\nLIMIT", " \r\nFROM",
+            " \r\nWHERE", " \r\nGROUP BY", " \r\nHAVING", " ORDER BY", " \r\nOR", " \r\nAND", " \r\nIFNULL", " \r\nON", " \r\nMATCH", " \r\nAGAINST",
+            " \r\nCOUNT");
+        $output = '';
+        if (isset($query)) {
+            $query->prepare();
+            $output = str_replace($searched, $replace, " " . $query->toSQL());
+        }
+        return $output;
+    }
+
 }
