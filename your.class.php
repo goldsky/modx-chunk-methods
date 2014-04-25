@@ -6,6 +6,9 @@
  */
 class ClassName {
 
+    const VERSION = '1.0.0';
+    const RELEASE = 'pl';
+
     /**
      * modX object
      * @var object
@@ -48,6 +51,7 @@ class ClassName {
         $basePath = $this->modx->getOption('mypackage.core_path', $config, $this->modx->getOption('core_path') . 'components/mypackage/');
         $assetsUrl = $this->modx->getOption('mypackage.assets_url', $config, $this->modx->getOption('assets_url') . 'components/mypackage/');
         $this->config = array_merge(array(
+            'version' => self::VERSION . '-' . self::RELEASE,
             'basePath' => $basePath,
             'corePath' => $basePath,
             'modelPath' => $basePath . 'model/',
@@ -62,7 +66,7 @@ class ClassName {
                 ), $config);
 
         $this->modx->lexicon->load('mypackage:default');
-        $tablePrefix = $this->modx->getOption('mypackage.table_prefix', null, $modx->config[modX::OPT_TABLE_PREFIX] . 'mypackage_');
+        $tablePrefix = $this->modx->getOption('mypackage.table_prefix', null, $this->modx->config[modX::OPT_TABLE_PREFIX] . 'mypackage_');
         $this->modx->addPackage('mypackage', $this->config['modelPath'], $tablePrefix);
     }
 
@@ -127,6 +131,15 @@ class ClassName {
     }
 
     /**
+     * Get an internal placeholder
+     * @param   string  $key    key
+     * @return  string  value
+     */
+    public function getPlaceholder($key) {
+        return $this->_placeholders[$key];
+    }
+
+    /**
      * Set internal placeholders
      * @param   array   $placeholders   placeholders in an associative array
      * @param   string  $prefix         add prefix if it's required
@@ -151,15 +164,6 @@ class ClassName {
      */
     public function getPlaceholders() {
         return $this->_placeholders;
-    }
-
-    /**
-     * Get an internal placeholder
-     * @param   string  $key    key
-     * @return  string  value
-     */
-    public function getPlaceholder($key) {
-        return $this->_placeholders[$key];
     }
 
     /**
