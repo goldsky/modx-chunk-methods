@@ -143,9 +143,10 @@ class ClassName {
      * Set internal placeholders
      * @param   array   $placeholders   placeholders in an associative array
      * @param   string  $prefix         add prefix if it's required
+     * @param   boolean $merge          define whether the output will be merge to global properties or not
      * @return  mixed   boolean|array of placeholders
      */
-    public function setPlaceholders($placeholders, $prefix = '') {
+    public function setPlaceholders($placeholders, $prefix = '', $merge = true) {
         if (empty($placeholders)) {
             return FALSE;
         }
@@ -153,7 +154,9 @@ class ClassName {
         $placeholders = $this->trimArray($placeholders);
         $placeholders = $this->implodePhs($placeholders, rtrim($prefix, '.'));
         // enclosed private scope
-        $this->_placeholders = array_merge($this->_placeholders, $placeholders);
+        if ($merge) {
+            $this->_placeholders = array_merge($this->_placeholders, $placeholders);
+        }
         // return only for this scope
         return $placeholders;
     }
