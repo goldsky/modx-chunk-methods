@@ -144,15 +144,16 @@ class ClassName {
      * @param   array   $placeholders   placeholders in an associative array
      * @param   string  $prefix         add prefix if it's required
      * @param   boolean $merge          define whether the output will be merge to global properties or not
+     * @param   string  $delimiter      define placeholder's delimiter
      * @return  mixed   boolean|array of placeholders
      */
-    public function setPlaceholders($placeholders, $prefix = '', $merge = true) {
+    public function setPlaceholders($placeholders, $prefix = '', $merge = true, $delimiter = '.') {
         if (empty($placeholders)) {
             return FALSE;
         }
         $prefix = !empty($prefix) ? $prefix : (isset($this->config['phsPrefix']) ? $this->config['phsPrefix'] : '');
         $placeholders = $this->trimArray($placeholders);
-        $placeholders = $this->implodePhs($placeholders, rtrim($prefix, '.'));
+        $placeholders = $this->implodePhs($placeholders, rtrim($prefix, $delimiter));
         // enclosed private scope
         if ($merge) {
             $this->_placeholders = array_merge($this->_placeholders, $placeholders);
