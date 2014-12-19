@@ -21,14 +21,14 @@ class ClassName {
     public $config;
     /**
      * To hold error message
-     * @var string
+     * @var array
      */
-    private $_error = '';
+    private $_error = array();
     /**
      * To hold output message
-     * @var string
+     * @var array
      */
-    private $_output = '';
+    private $_output = array();
     /**
      * To hold placeholder array, flatten array with prefixable
      * @var array
@@ -92,7 +92,7 @@ class ClassName {
      * @return  void
      */
     public function setError($msg) {
-        $this->_error = $msg;
+        $this->_error[] = $msg;
     }
 
     /**
@@ -100,7 +100,7 @@ class ClassName {
      * @return  string  output
      */
     public function getError() {
-        return $this->_error;
+        return @implode("\n", $this->_error);
     }
 
     /**
@@ -108,7 +108,7 @@ class ClassName {
      * @return  void
      */
     public function setOutput($msg) {
-        $this->_output = $msg;
+        $this->_output[] = $msg;
     }
 
     /**
@@ -116,7 +116,7 @@ class ClassName {
      * @return  string  output
      */
     public function getOutput() {
-        return $this->_output;
+        return @implode("\n", $this->_output);
     }
 
     /**
