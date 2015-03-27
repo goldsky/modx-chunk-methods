@@ -96,11 +96,16 @@ class ClassName {
     }
 
     /**
+     *
      * Get string error for boolean returned methods
+     * @param   string  $delimiter  delimiter of the imploded output (default: "\n")
      * @return  string  output
      */
-    public function getError() {
-        return @implode("\n", $this->_error);
+    public function getError($delimiter = "\n") {
+        if ($delimiter === '\n') {
+            $delimiter = "\n";
+        }
+        return @implode($delimiter, $this->_error);
     }
 
     /**
@@ -113,10 +118,14 @@ class ClassName {
 
     /**
      * Get string output for boolean returned methods
+     * @param   string  $delimiter  delimiter of the imploded output (default: "\n")
      * @return  string  output
      */
-    public function getOutput() {
-        return @implode("\n", $this->_output);
+    public function getOutput($delimiter = "\n") {
+        if ($delimiter === '\n') {
+            $delimiter = "\n";
+        }
+        return @implode($delimiter, $this->_output);
     }
 
     /**
