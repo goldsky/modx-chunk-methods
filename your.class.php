@@ -267,7 +267,10 @@ class ClassName {
             try {
                 $output = $this->parseTplFile($tplFile, $phs);
             } catch (Exception $e) {
-                return $e->getMessage();
+                $err = $e->getMessage();
+                $this->setError($err);
+                $this->modx->log(modX::LOG_LEVEL_ERROR, $err);
+                return false;
             }
         }
         // ignore @CHUNK / @CHUNK: / empty @BINDING
@@ -284,8 +287,10 @@ class ClassName {
                 try {
                     $output = $this->parseTplFile($f, $phs);
                 } catch (Exception $e) {
-                    $output = $e->getMessage();
-                    return 'Chunk: ' . $tplChunk . ' is not found, neither the file ' . $output;
+                    $err = 'Chunk: ' . $tplChunk . ' is not found, neither the file ' . $e->getMessage();
+                    $this->setError($err);
+                    $this->modx->log(modX::LOG_LEVEL_ERROR, $err);
+                    return false;
                 }
             } else {
 //                $output = $this->modx->getChunk($tplChunk, $phs);
