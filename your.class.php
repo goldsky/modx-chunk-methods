@@ -334,8 +334,10 @@ class ClassName {
         if (!file_exists($file)) {
             throw new Exception('File: ' . $file . ' is not found.');
         }
-        $o = file_get_contents($file);
-        $this->_chunks[$file] = $o;
+        if (empty($this->_chunks[$file])) {
+            $o = file_get_contents($file);
+            $this->_chunks[$file] = $o;
+        }
         $chunk = $this->modx->newObject('modChunk');
 
         // just to create a name for the modChunk object.
