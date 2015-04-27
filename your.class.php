@@ -347,7 +347,7 @@ class ClassName {
         $chunk->set('name', $name);
 
         $chunk->setCacheable(false);
-        $chunk->setContent($o);
+        $chunk->setContent($this->_chunks[$file]);
         $chunk->_processed = false;
         $output = $chunk->process($phs);
 
