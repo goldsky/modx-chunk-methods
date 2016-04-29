@@ -216,7 +216,9 @@ class ClassName {
         $string = preg_replace('/(&Acirc;|&nbsp;)+/i', '', $string);
         $string = trim($string, $charlist);
         $string = trim(preg_replace('/\s+^(\r|\n|\r\n)/', ' ', $string));
-        $string = html_entity_decode($string);
+        $charSet = $this->modx->getOption('modx_charset', null, 'UTF-8');
+        $string = html_entity_decode($string, ENT_COMPAT | ENT_HTML5, $charSet);
+
         return $string;
     }
 
